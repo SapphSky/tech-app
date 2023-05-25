@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Grading Sheet</title>
+</head>
+<body>
+    <template id="temp_category">
+        <details open><summary></summary>
+            <div class="container">
+                
+            </div>
+        </details>
+    </template>
+
+    <template id="temp_item">
+        <span class="entry" title="">
+            <input type="checkbox" id="" value="">
+            <label for=""></label>
+        </span>
+    </template>
+
+    <header>
+        <span>D-Grading Form <span class="ultra">4.0</span></span>
+        <input type="button" value="Generate & Copy" disabled>
+        <input type="checkbox" class="btn_theme" id="theme-chkbx">
+    </header>
+
+    <div id="insert">
+
+    </div>
+
+    <div>
+        <p id="output"></p>
+        
+    </div>
+    
+</body>
+
+<script>
+    var idIndex = -1;
+    function generateID() {
+        idIndex++;
+        return idIndex;
+    }
+
+    function templatesAreSupported() {
+        return ("content" in document.createElement("template"));
+    }
+
+    function createCategory(name) {
+        if (templatesAreSupported()) {
+            const template = document.querySelector("#temp_category");
+            const clone = template.content.firstElementChild.cloneNode(true);
+
+            let summary = clone.querySelector("summary");
+            summary.textContent = name;
+
+            document.querySelector("#insert").appendChild(clone);
+            return clone;
+        }
+        else {
+            console.error("Templates are not supported on this browser.");
+        }
+    }
+
+    function createOption(parent, desc, full_desc) {
+        if (templatesAreSupported()) {
+            const template = document.querySelector("#temp_item");
+            const clone = template.content.cloneNode(true);
+
+            let uid = generateID();
+            let chkbx = clone.querySelector("input");
+            chkbx.id = uid;
+            chkbx.value = desc;
+
+            let label = clone.querySelector("label");
+            label.setAttribute("for", uid);
+            label.textContent = desc;
+            if (full_desc) {
+                clone.title = full_desc;
+            }
+            parent.appendChild(clone);
+        }
+        else {
+            console.error("Templates are not supported on this browser.");
+        }
+    }
+
+    const categories = {
+        "Body": {
+            "Base Dings": "Dings on base",
+            "Base Dents": "Dents on base",
+            "Top Scratches": "Scratches on top",
+            "Top Dings": "Dings on top",
+            "Top Dents": "Dents on top",
+            "Top Discoloration": "Discoloration on top",
+            "Peeling Laminate": "Peeling case laminate",   
+        },
+
+        "Inner Casing": {
+            "Scratches": "Scratches on inner casing",
+            "Dings": "Dings on inner casing",
+            "Dents": "Dents on inner casing",
+            "Discoloration": "Discoloration on inner casing",
+        },
+
+        "Keyboard": {
+            "Worn keys": "Worn keys",
+            "Missing keys": "Missing keys",
+            "Malfunctioning": "Malfunctioning keys",
+            "Non-US keyboard": "Foreign keyboard layout",
+            "Touchbar problems": "Touchbar partially/fully not working",
+        },
+
+        "Screen": {
+            "Screen laminate damage": "Laminate damage on screen",
+            "Screen discoloration": "Discoloration on screen",
+            "Screen spot damage": "Spot damage on screen",
+            "Screen yellowing": "Yellowing screen",
+            "Scratched screen": "Scratches on screen",
+            "Cracked screen": "Cracked screen",
+            "Cracked bezel": "Cracked bezel",
+            "Cracked clutch": "Cracked clutch",
+            "Loose hinge": "Loose hinge",
+            "Torn gasket": "Torn rubber gasket",
+        },
+
+        "Other": {
+            "Bad battery": "Battery failing",
+            "No battery": "Missing battery",
+            "No hard drive": "No internal storage drive",
+            "Speakers malfunctioning": "Speakers not working",
+            "Microphone broken": "Microphone not working",
+            "Webcam broken": "Webcam not working",
+            "Ports broken": "Port(s) not working (please specify)",
+        },
+
+        "Ports": {
+            "HDMI not working": "HDMI",
+            "Wi-Fi not working" : "Fi-Fi",
+        }
+    }
+    console.log(categories);
+    
+    function Initialize() {
+        for (i in categories) {
+            const cat = createCategory(i);
+            for (j in categories[i]) {
+                createOption(cat, categories[i][j]);
+            }
+        }
+    }
+
+    Initialize();
+
+    const themeBtn = document.querySelector('.btn_theme');
+    themeBtn.addEventListener('change', function() {
+        if (this.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+
+        }
+        else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    });
+</script>
+
+<style>
+    :root {
+        --bg-color: rgb(229, 229, 229);
+        --text-color: rgb(26, 26, 26);
+        --panel-color: rgb(203, 203, 203);
+        --hover-mul: 64;
+    }
+
+    .btn_theme {
+        appearance: none;
+        background: #15379B;
+        background: conic-gradient(from 315deg, #15379B, #261159);
+        border-radius: 50%;
+        transition: ease 0.5s;
+    }
+
+    .btn_theme:hover {
+        border-width: 2px;
+        border-color: white;
+        border-style: solid;
+    }
+
+    .btn_theme:checked {
+        background: #FFEF86;
+        background: conic-gradient(from 45deg, #FFEF86, #50FDFA);
+    }
+
+    [data-theme="dark"] {
+        --bg-color: rgb(26, 26, 26);
+        --text-color: rgb(229, 229, 229);
+        --panel-color: rgb(52, 52, 52);
+        --hover-mul: 255;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin-top: 64px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    header {
+        display: flex;
+        flex-direction: row;
+        position: fixed;
+        padding: 12px 1em;
+        top: 0;
+        left: 0;
+        right: 0;
+        gap: 8px;
+        background-color: var(--panel-color);
+        min-height: 1em;
+        z-index: 1;
+        white-space: nowrap;
+        user-select: none;
+    }
+
+    div#insert {
+        user-select: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        row-gap: 8px;
+        column-gap: 8px;
+        width: 100%;
+    }
+
+    details {
+        padding: 4px 8px;
+        background-color: var(--panel-color);
+        border-radius: 8px;
+        box-sizing: border-box;
+    }
+
+    summary {
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 2px 8px;
+        font-size: large;
+        transition: ease 0.2s;
+    }
+
+    summary:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    summary:active {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    span.entry {
+        display: inline-block;
+        margin: 2px 4px;
+        transition: ease 0.2s;
+        padding: 4px;
+        border-radius: 4px;
+    }
+
+    span.entry:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    span.entry:active {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+    }
+
+    label {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .ultra {
+        background: -webkit-linear-gradient(#35f7dd, #e03d73);
+        font-weight: bold;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+</html>
